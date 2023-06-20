@@ -1,0 +1,18 @@
+https://docs.aws.amazon.com/whitepapers/latest/microservices-on-aws/service-discovery.html
+
+techniques for performing service discovery on AWS for microservices-based architectures are explored.
+
+Amazon ECS now includes integrated service discovery that makes it easy for your containerized services to discover and connect with each other.
+you had to configure and run your own service discovery system based on Amazon Route 53, AWS Lambda, and ECS Event Stream, or connect every service to a load balancer.
+Amazon ECS creates and manages a registry of service names using the Route 53 Auto Naming API
+In addition, you can also use unified service discovery for services managed by Kubernetes.
+AWS Cloud Map 
+
+
+most complex part of the application is not the actual services themselves, but the communication between those services
+Service meshes are an additional layer for handling interservice communication, which is responsible for monitoring and controlling traffic in microservices architectures
+
+
+https://aws.amazon.com/solutions/partners/consul/
+
+https://tomgregory.com/how-to-deploy-eureka-into-aws-ecs/
