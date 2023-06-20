@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: portfolio
+
+server:
+  servlet:
+    context-path: /portfolio
+  port : 8081

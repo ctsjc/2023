@@ -1,0 +1,33 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Test",
+		"_postman_id": "e21b7ff9-037e-1f55-2691-7f489357c1f6",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "search_1",
+			"request": {
+				"url": "localhost:8082/search/hello",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "portfolio_1",
+			"request": {
+				"url": "localhost:8081/portfolio/hello",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
