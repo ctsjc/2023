@@ -16,3 +16,23 @@ Service meshes are an additional layer for handling interservice communication, 
 https://aws.amazon.com/solutions/partners/consul/
 
 https://tomgregory.com/how-to-deploy-eureka-into-aws-ecs/
+
+
+
+docker build -t msv01 .
+docker run -p 8082:8082 msv01
+
+docker login -u iamjc321 docker.io
+
+docker tag msv01:latest iamjc321/msv01:latest
+
+docker push iamjc321/msv01:latest
+
+
+
+kubectl run msv01 --image=iamjc321/msv01 --restart=Never --dry-run -o yaml > kub.yaml
+
+kubectl create -f pod.yaml
+kubectl expose po n --port=80 --target-port=9376
+
+kubectl expose po msv01 --port=8082 --target-port=8082 --type=LoadBalancer
