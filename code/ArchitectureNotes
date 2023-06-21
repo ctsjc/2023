@@ -36,3 +36,18 @@ kubectl create -f pod.yaml
 kubectl expose po n --port=80 --target-port=9376
 
 kubectl expose po msv01 --port=8082 --target-port=8082 --type=LoadBalancer
+
+
+
+
+
+mvn clean package
+docker build -t msv01:latest .
+docker tag msv01:latest iamjc321/msv01:latest
+docker push iamjc321/msv01:latest
+kubectl delete svc msv01 ; kubectl delete pod msv01
+kubectl create -f kub.yaml
+kubectl expose po msv01 --port=8082 --target-port=8082 --type=LoadBalancer
+kubectl logs msv01
+
+
