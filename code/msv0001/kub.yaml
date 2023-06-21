@@ -7,9 +7,8 @@ metadata:
   name: msv01
 spec:
   containers:
-  - image: iamjc321/msv01
+  - image: iamjc321/msv01:latest
     name: msv01
     resources: {}
-  dnsPolicy: ClusterFirst
   restartPolicy: Never
 status: {}

@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: msv02
+  name: msv02
+spec:
+  containers:
+  - image: iamjc321/msv02
+    name: msv02
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: msv02
+spec:
+  selector:
+    app: msv02
+  ports:
+    - protocol: TCP
+      port: 80
