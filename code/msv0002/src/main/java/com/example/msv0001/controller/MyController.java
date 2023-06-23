@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MyController {
     @GetMapping("hello")
     public String sendMe(){
+        System.out.println("Request Received...");
         return "Response From Portfolio";
     }
 }

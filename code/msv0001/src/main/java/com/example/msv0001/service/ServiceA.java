@@ -13,7 +13,10 @@ public class ServiceA {
     public String makeACall(){
         RestTemplate restTemplate=new RestTemplate();
         String api="/hello";
-        ResponseEntity<String> forEntity = restTemplate.getForEntity(portfolio + api, String.class);
+        System.out.println("Calling another service on URL :: "+portfolio+api);
+        ResponseEntity<String> forEntity = restTemplate.getForEntity(portfolio + api,
+                String.class);
+        System.out.println("Response is recived Code"+forEntity.getStatusCode());
         return "From Portfolio: ["+ forEntity.getBody() +"]";
     }
 }

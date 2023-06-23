@@ -1,0 +1,36 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: msv
+  namespace: dev2023
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*"
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: msv
+  namespace: dev2023
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - msv
+  http:
+  - match:
+    - uri:
+        prefix: /search/
+    route:
+    - destination:
+        host: msv01
+        port:
+          number: 8082

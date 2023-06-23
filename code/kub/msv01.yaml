@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: msv01
+  namespace: dev2023
 spec:
   replicas: 1
   selector:
@@ -14,10 +15,24 @@ spec:
     spec:
       containers:
         - name: msv01
-          image: iamjc321/msv01:1.0.3
+          image: iamjc321/msv01:1.0.4
           imagePullPolicy: Always
           ports:
             - containerPort: 8081
           env:
             - name: PORTFOLIO_URL
               value: http://msv02:8081/portfolio
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: msv01
+  namespace: dev2023
+spec: 
+  ports:
+  - port: 8082
+    targetPort: 8082
+    protocol: TCP
+    name: http
+  selector:
+    app: msv01

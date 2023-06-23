@@ -8,4 +8,5 @@ server:
   port : 8082
 
 external:
-  portfolio: http://${{msv02}}/portfolio
+  portfolio: ${PORTFOLIO_URL}
+

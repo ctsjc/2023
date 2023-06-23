@@ -11,11 +11,15 @@ public class MyController {
     ServiceA serviceA;
     @GetMapping("hello")
     public String sendMe(){
+
+        System.out.println("Request Received...");
         return "Response From MSV1";
     }
 
     @GetMapping("iscall")
     public String sendMe1(){
+
+        System.out.println("Request Received...");
         return serviceA.makeACall();
     }
 }

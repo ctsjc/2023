@@ -1,0 +1,33 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: msv02-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 8081
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: msv02
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - msv02-gateway
+  http:
+    - match:
+        - uri:
+            prefix: /msv02
+      route:
+        - destination:
+            host: msv02
+            port:
+              number: 8081
