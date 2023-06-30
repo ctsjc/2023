@@ -18,6 +18,12 @@ docker push iamjc321/msv01:latest
 </details>
 
 
+<details>
+<summary>Install MiniKube on Machine</summary>
+Minikube is kubernet software like Rancher.
+
+[MiniKube Installation](https://minikube.sigs.k8s.io/docs/start/)
+</details>
 
 <details>
 <summary>Foundations</summary>
