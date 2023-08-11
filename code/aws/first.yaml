@@ -1,0 +1,123 @@
+Resources:
+  myVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      Tags:
+        - Key: jrelease
+          Value: jint
+  # mySubnetName:
+  #   Type: AWS::EC2::Subnet
+  #   Properties:
+  #     AvailabilityZone: us-east-1a
+  #     VpcId: !Ref myVPC
+  #     CidrBlock: 10.0.0.0/17
+  #     Tags:
+  #       - Key: jrelease
+  #         Value: jint
+
+
+  # myEC2Instance:
+  #   Type: AWS::EC2::Instance
+  #   Properties:
+  #     ImageId: ami-08a52ddb321b32a8c
+  #     InstanceType: "t2.micro"
+  #     SubnetId: !Ref mySubnetName
+  #     SecurityGroupIds:
+  #       - !Ref mySecGroupName
+  #     UserData: !Base64 |
+  #       #!/bin/bash -ex
+  #       apt update -y
+  #       apt install nginx -y
+  #     Tags:
+  #       - Key: jrelease
+  #         Value: jint
+
+  myInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+    Tags:
+      - Key: jrelease
+        Value: jint
+
+  AttachInternetGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref myInternetGateway
+      VpcId: !Ref myVPC
+
+myRouteTable:
+  Type: AWS::EC2::RouteTable
+  VpcId: !Ref myVPC
+  Properties:
+  Tags:
+    - Key: jrelease
+      Value: jint
+
+
+myEC2Route:
+  DependsOn: myInternetGateway
+  Type: AWS::EC2::Route
+  Properties:
+    GatewayId: !Ref myInternetGateway
+    RouteTableId: !Ref myRouteTable
+    DestinationCidrBlock: 0.0.0.0/0
+
+    
+mySubnetRouteTableAssociation:
+  Type: AWS::EC2::SubnetRouteTableAssociation
+  Properties:
+
+    RouteTableId: !Ref myRouteTable
+
+    SubnetId: !Ref myPublicSubnetName
+
+
+
+  myPublicSubnetName:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: us-east-1a
+      VpcId: !Ref myVPC
+      MapPublicIpOnLaunch: True #Check what this mother fucker tag is doing
+      CidrBlock: 10.0.128.0/17
+      Tags:
+        - Key: jrelease
+          Value: jint
+
+
+  myPublicEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-08a52ddb321b32a8c
+      InstanceType: "t2.micro"
+      SubnetId: !Ref myPublicEC2Instance
+      SecurityGroupIds:
+        - !Ref mySecGroupName
+      UserData: !Base64 |
+        #!/bin/bash -ex
+        apt update -y
+        apt install nginx -y
+      Tags:
+        - Key: jrelease
+          Value: jint
+
+  mySecGroupName:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Created in CFN Allow http to client host
+      VpcId: !Ref myVPC
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: jrelease
+          Value: jint
