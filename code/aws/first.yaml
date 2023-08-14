@@ -1,4 +1,5 @@
 Resources:
+#VPC
   myVPC:
     Type: AWS::EC2::VPC
     Properties:
@@ -7,117 +8,298 @@ Resources:
       Tags:
         - Key: jrelease
           Value: jint
-  # mySubnetName:
-  #   Type: AWS::EC2::Subnet
-  #   Properties:
-  #     AvailabilityZone: us-east-1a
-  #     VpcId: !Ref myVPC
-  #     CidrBlock: 10.0.0.0/17
-  #     Tags:
-  #       - Key: jrelease
-  #         Value: jint
 
-
-  # myEC2Instance:
-  #   Type: AWS::EC2::Instance
-  #   Properties:
-  #     ImageId: ami-08a52ddb321b32a8c
-  #     InstanceType: "t2.micro"
-  #     SubnetId: !Ref mySubnetName
-  #     SecurityGroupIds:
-  #       - !Ref mySecGroupName
-  #     UserData: !Base64 |
-  #       #!/bin/bash -ex
-  #       apt update -y
-  #       apt install nginx -y
-  #     Tags:
-  #       - Key: jrelease
-  #         Value: jint
-
-  myInternetGateway:
-    Type: AWS::EC2::InternetGateway
-    Properties:
-    Tags:
-      - Key: jrelease
-        Value: jint
-
-  AttachInternetGateway:
-    Type: AWS::EC2::VPCGatewayAttachment
-    Properties:
-      InternetGatewayId: !Ref myInternetGateway
-      VpcId: !Ref myVPC
-
-myRouteTable:
-  Type: AWS::EC2::RouteTable
-  VpcId: !Ref myVPC
-  Properties:
-  Tags:
-    - Key: jrelease
-      Value: jint
-
-
-myEC2Route:
-  DependsOn: myInternetGateway
-  Type: AWS::EC2::Route
-  Properties:
-    GatewayId: !Ref myInternetGateway
-    RouteTableId: !Ref myRouteTable
-    DestinationCidrBlock: 0.0.0.0/0
-
-    
-mySubnetRouteTableAssociation:
-  Type: AWS::EC2::SubnetRouteTableAssociation
-  Properties:
-
-    RouteTableId: !Ref myRouteTable
-
-    SubnetId: !Ref myPublicSubnetName
-
-
-
-  myPublicSubnetName:
+#Public Subnet      
+  myPublicSubnet:
     Type: AWS::EC2::Subnet
     Properties:
       AvailabilityZone: us-east-1a
       VpcId: !Ref myVPC
-      MapPublicIpOnLaunch: True #Check what this mother fucker tag is doing
-      CidrBlock: 10.0.128.0/17
+      MapPublicIpOnLaunch: True
+      CidrBlock: 10.0.0.0/17
+      Tags:
+        - Key: jrelease
+          Value: jint
+
+  myPublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: us-east-1b
+      VpcId: !Ref myVPC
+      MapPublicIpOnLaunch: True
+      CidrBlock: 10.0.128.0/17	
       Tags:
         - Key: jrelease
           Value: jint
 
 
-  myPublicEC2Instance:
+#EC2 in public subnet, now defined in Laucch Template
+  myPublicEC2Instance1:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-08a52ddb321b32a8c
+      ImageId: ami-09538990a0c4fe9be
       InstanceType: "t2.micro"
-      SubnetId: !Ref myPublicEC2Instance
+      SubnetId: !Ref myPublicSubnet
+      KeyName: "myBuntu"
       SecurityGroupIds:
         - !Ref mySecGroupName
       UserData: !Base64 |
-        #!/bin/bash -ex
-        apt update -y
-        apt install nginx -y
+        #!/bin/bash
+        yum update -y
+        yum install -y httpd
+        systemctl start httpd
+        systemctl enable httpd
+        echo 'path: "/"' >> /var/www/html/index.html
+        ec2-metadata -i >> /var/www/html/index.html
+        
+        mkdir /var/www/html/instance1
+        echo 'path: "/isntace1/"' >> /var/www/html/instance1/index.html
+        ec2-metadata -i >> /var/www/html/instance1/index.html
       Tags:
         - Key: jrelease
           Value: jint
 
+  myPublicEC2Instance2:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-09538990a0c4fe9be
+      InstanceType: "t2.micro"
+      SubnetId: !Ref myPublicSubnet
+      KeyName: "myBuntu"
+      SecurityGroupIds:
+        - !Ref mySecGroupName
+      UserData: !Base64 |
+        #!/bin/bash
+        yum update -y
+        yum install -y httpd
+        systemctl start httpd
+        systemctl enable httpd
+        echo 'path: "/"' >> /var/www/html/index.html
+        ec2-metadata -i >> /var/www/html/index.html
+        
+        mkdir /var/www/html/instance2
+        echo 'path: "/instance2/"' >> /var/www/html/instance2/index.html
+        ec2-metadata -i >> /var/www/html/instance2/index.html
+      Tags:
+        - Key: jrelease
+          Value: jint
+
+###
+  myPublicEC2Instance21:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-09538990a0c4fe9be
+      InstanceType: "t2.micro"
+      SubnetId: !Ref myPublicSubnet2
+      KeyName: "myBuntu"
+      SecurityGroupIds:
+        - !Ref mySecGroupName
+      UserData: !Base64 |
+        #!/bin/bash
+        yum update -y
+        yum install -y httpd
+        systemctl start httpd
+        systemctl enable httpd
+        echo 'path: "/"' >> /var/www/html/index.html
+        ec2-metadata -i >> /var/www/html/index.html
+        
+        mkdir /var/www/html/instance1
+        echo 'path: "/isntace1/"' >> /var/www/html/instance1/index.html
+        ec2-metadata -i >> /var/www/html/instance1/index.html
+      Tags:
+        - Key: jrelease
+          Value: jint
+
+  myPublicEC2Instance22:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-09538990a0c4fe9be
+      InstanceType: "t2.micro"
+      SubnetId: !Ref myPublicSubnet2
+      KeyName: "myBuntu"
+      SecurityGroupIds:
+        - !Ref mySecGroupName
+      UserData: !Base64 |
+        #!/bin/bash
+        yum update -y
+        yum install -y httpd
+        systemctl start httpd
+        systemctl enable httpd
+        echo 'path: "/"' >> /var/www/html/index.html
+        ec2-metadata -i >> /var/www/html/index.html
+        
+        mkdir /var/www/html/instance2
+        echo 'path: "/instance2/"' >> /var/www/html/instance2/index.html
+        ec2-metadata -i >> /var/www/html/instance2/index.html
+      Tags:
+        - Key: jrelease
+          Value: jint
+###
+#Security Group
   mySecGroupName:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Created in CFN Allow http to client host
+      GroupName: MyCloudFormationSG
       VpcId: !Ref myVPC
       SecurityGroupIngress:
       - IpProtocol: tcp
         FromPort: 80
         ToPort: 80
         CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0  
+      - IpProtocol: tcp
+        FromPort: 443
+        ToPort: 443
+        CidrIp: 0.0.0.0/0          
       SecurityGroupEgress:
+      - IpProtocol: tcp
+        FromPort: 443
+        ToPort: 443
+        CidrIp: 0.0.0.0/0                
       - IpProtocol: tcp
         FromPort: 80
         ToPort: 80
         CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0    
       Tags:
         - Key: jrelease
           Value: jint
+
+# Internet Gateway
+  myInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: jrelease
+          Value: jint
+
+# Attach Internet Gateway to VPC
+  AttachInternetGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref myInternetGateway
+      VpcId: !Ref myVPC
+
+# Route Table 
+  myRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref myVPC
+      Tags:
+        - Key: jrelease
+          Value: jint
+
+# EC2 & IGW Route Table connection 
+  myEC2Route:
+    DependsOn: myInternetGateway
+    Type: AWS::EC2::Route
+    Properties:
+      GatewayId: !Ref myInternetGateway
+      RouteTableId: !Ref myRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      
+
+# Route Table and Subnet Connection
+  mySubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref myRouteTable
+      SubnetId: !Ref myPublicSubnet
+
+
+  mySubnetRouteTableAssociation2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref myRouteTable
+      SubnetId: !Ref myPublicSubnet2
+
+  myALB: 
+    Type : 'AWS::ElasticLoadBalancingV2::LoadBalancer'
+    Properties :
+      SecurityGroups: 
+        - !Ref mySecGroupName 
+      Subnets : 
+        - !Ref myPublicSubnet
+        - !Ref myPublicSubnet2
+
+
+  ALBListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties: 
+      DefaultActions: 
+        - TargetGroupArn: !Ref ALBTargetGroup1
+          Type: forward
+      LoadBalancerArn: !Ref myALB
+      Port: 80
+      Protocol: HTTP
+      
+  ALBListenerRule1:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      Actions:
+        - TargetGroupArn: !Ref ALBTargetGroup1
+          Type: forward
+      Conditions:
+        - Field: path-pattern
+          PathPatternConfig:
+            Values:
+              - /instance1/*
+      ListenerArn: !Ref ALBListener
+      Priority: 1
+      
+  ALBListenerRule2:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      Actions:
+        - TargetGroupArn: !Ref ALBTargetGroup2
+          Type: forward
+      Conditions:
+        - Field: path-pattern
+          PathPatternConfig:
+            Values:
+              - /instance2/*
+      ListenerArn: !Ref ALBListener
+      Priority: 2
+
+
+
+
+  ALBTargetGroup1:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      VpcId: !Ref myVPC
+      Name: ALBTargetGroup1
+      Protocol: HTTP
+      Port: 80
+      HealthCheckProtocol: HTTP
+      HealthCheckPath: /
+      HealthCheckPort: traffic-port
+      Matcher: 
+        HttpCode: 200
+      Targets:
+        - Id: !Ref myPublicEC2Instance1
+      TargetType: instance
+
+
+  ALBTargetGroup2:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      VpcId: !Ref myVPC
+      Name: ALBTargetGroup2
+      Protocol: HTTP
+      Port: 80
+      HealthCheckProtocol: HTTP
+      HealthCheckPath: /
+      HealthCheckPort: traffic-port
+      Matcher: 
+        HttpCode: 200
+      Targets:
+        - Id: !Ref myPublicEC2Instance2
+      TargetType: instance
