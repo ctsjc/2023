@@ -3,11 +3,13 @@ Resources:
   myVPC:
     Type: AWS::EC2::VPC
     Properties:
-      CidrBlock: 10.0.0.0/16
+      CidrBlock: 10.0.0.0/26
       EnableDnsSupport: true
       Tags:
         - Key: jrelease
           Value: jint
+        - Key: Name 
+          Value: myVPC          
 
 #Public Subnet      
   myPublicSubnet:
@@ -16,10 +18,25 @@ Resources:
       AvailabilityZone: us-east-1a
       VpcId: !Ref myVPC
       MapPublicIpOnLaunch: True
-      CidrBlock: 10.0.0.0/17
+      CidrBlock: 10.0.0.0/28
       Tags:
         - Key: jrelease
           Value: jint
+        - Key: Name 
+          Value: myPublicSubnet
+
+  myPrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: us-east-1a
+      VpcId: !Ref myVPC
+      CidrBlock: 10.0.0.16/28
+      Tags:
+        - Key: jrelease
+          Value: jint
+        - Key: Name 
+          Value: myPrivateSubnet
+
 
   myPublicSubnet2:
     Type: AWS::EC2::Subnet
@@ -27,19 +44,35 @@ Resources:
       AvailabilityZone: us-east-1b
       VpcId: !Ref myVPC
       MapPublicIpOnLaunch: True
-      CidrBlock: 10.0.128.0/17	
+      CidrBlock: 10.0.0.32/28
       Tags:
         - Key: jrelease
           Value: jint
+        - Key: Name 
+          Value: myPublicSubnet2
+
+
+
+  myPrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: us-east-1b
+      VpcId: !Ref myVPC
+      CidrBlock: 10.0.0.48/28
+      Tags:
+        - Key: jrelease
+          Value: jint
+        - Key: Name 
+          Value: myPrivateSubnet2
 
 
 #EC2 in public subnet, now defined in Laucch Template
-  myPublicEC2Instance1:
+  myPrivateEC2Instance1:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: ami-09538990a0c4fe9be
       InstanceType: "t2.micro"
-      SubnetId: !Ref myPublicSubnet
+      SubnetId: !Ref myPrivateSubnet
       KeyName: "myBuntu"
       SecurityGroupIds:
         - !Ref mySecGroupName
@@ -58,13 +91,16 @@ Resources:
       Tags:
         - Key: jrelease
           Value: jint
+        - Key: Name 
+          Value:   myPrivateEC2Instance1
 
-  myPublicEC2Instance2:
+
+  myPrivateEC2Instance2:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: ami-09538990a0c4fe9be
       InstanceType: "t2.micro"
-      SubnetId: !Ref myPublicSubnet
+      SubnetId: !Ref myPrivateSubnet
       KeyName: "myBuntu"
       SecurityGroupIds:
         - !Ref mySecGroupName
@@ -83,14 +119,16 @@ Resources:
       Tags:
         - Key: jrelease
           Value: jint
+        - Key: Name 
+          Value:   myPrivateEC2Instance2
 
 ###
-  myPublicEC2Instance21:
+  myPrivateEC2Instance21:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: ami-09538990a0c4fe9be
       InstanceType: "t2.micro"
-      SubnetId: !Ref myPublicSubnet2
+      SubnetId: !Ref myPrivateSubnet2
       KeyName: "myBuntu"
       SecurityGroupIds:
         - !Ref mySecGroupName
@@ -109,13 +147,16 @@ Resources:
       Tags:
         - Key: jrelease
           Value: jint
+        - Key: Name 
+          Value:   myPrivateEC2Instance21
 
-  myPublicEC2Instance22:
+
+  myPrivateEC2Instance22:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: ami-09538990a0c4fe9be
       InstanceType: "t2.micro"
-      SubnetId: !Ref myPublicSubnet2
+      SubnetId: !Ref myPrivateSubnet2
       KeyName: "myBuntu"
       SecurityGroupIds:
         - !Ref mySecGroupName
@@ -134,6 +175,8 @@ Resources:
       Tags:
         - Key: jrelease
           Value: jint
+        - Key: Name 
+          Value:   myPrivateEC2Instance22          
 ###
 #Security Group
   mySecGroupName:
@@ -171,6 +214,9 @@ Resources:
       Tags:
         - Key: jrelease
           Value: jint
+        - Key: Name 
+          Value: myPublicSubnet
+
 
 # Internet Gateway
   myInternetGateway:
@@ -179,7 +225,11 @@ Resources:
       Tags:
         - Key: jrelease
           Value: jint
+        - Key: Name 
+          Value: myInternetGateway  
 
+
+          
 # Attach Internet Gateway to VPC
   AttachInternetGateway:
     Type: AWS::EC2::VPCGatewayAttachment
@@ -205,7 +255,6 @@ Resources:
       RouteTableId: !Ref myRouteTable
       DestinationCidrBlock: 0.0.0.0/0
       
-
 # Route Table and Subnet Connection
   mySubnetRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
@@ -228,6 +277,13 @@ Resources:
       Subnets : 
         - !Ref myPublicSubnet
         - !Ref myPublicSubnet2
+
+      Tags:
+        - Key: jrelease
+          Value: jint
+        - Key: Name 
+          Value: myALB
+
 
 
   ALBListener:
@@ -284,7 +340,7 @@ Resources:
       Matcher: 
         HttpCode: 200
       Targets:
-        - Id: !Ref myPublicEC2Instance1
+        - Id: !Ref myPrivateEC2Instance1
       TargetType: instance
 
 
@@ -301,5 +357,5 @@ Resources:
       Matcher: 
         HttpCode: 200
       Targets:
-        - Id: !Ref myPublicEC2Instance2
+        - Id: !Ref myPrivateEC2Instance2
       TargetType: instance
